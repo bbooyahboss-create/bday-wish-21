@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday Darling 🎉</title>
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    background: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: #fff;
+}
+.stage { display: none; flex-direction: column; justify-content: center; align-items: center; width: 100%; height: 100%; padding: 0 10px; box-sizing: border-box;}
+.stage.active { display: flex; }
+h1 { font-size: 6vw; text-align: center; text-shadow: 0 0 10px #ff69b4,0 0 20px #ff1493; margin:0;}
+.pink-box { background:#ff69b4; padding:5vw; border-radius:10px; box-shadow:0 0 20px #ff1493; position: relative; text-align:center; width:90%; max-width:400px;}
+.candle { width:3vw; height:8vw; background:#fff; border-radius:3px; position:absolute; top:-10vw; left:50%; transform:translateX(-50%); cursor:pointer;}
+.flame { width:3vw; height:4vw; background:yellow; border-radius:50%; position:absolute; top:-4vw; left:50%; transform:translateX(-50%); animation:flicker 0.5s infinite alternate; box-shadow:0 0 5px yellow,0 0 10px orange;}
+@keyframes flicker { from { transform: translateX(-50%) scaleY(1); opacity:1;} to { transform: translateX(-50%) scaleY(1.3); opacity:0.8;} }
+#shortWish,#letter { max-width:90%; text-align:center; font-size:4vw; line-height:1.6; margin:5vw 0; white-space:pre-line;}
+.visible { opacity:1; transition: opacity 1s ease; }
+.confetti,.balloon { position:absolute; border-radius:50%;}
+.confetti { width:2.5vw; height:2.5vw; animation:fall 3s linear infinite;}
+@keyframes fall {0%{transform:translateY(0) rotate(0deg);opacity:1;}100%{transform:translateY(100vh) rotate(360deg);opacity:0;}}
+.balloon { width:12vw; height:16vw; animation:rise 7s linear infinite;}
+@keyframes rise {0%{transform:translateY(0);}100%{transform:translateY(-110vh);}}
+.string { width:0.5vw; height:8vw; background:#555; position:absolute; top:16vw; left:5.5vw;}
+button { padding:3vw 5vw; font-size:4vw; border:none; border-radius:2vw; cursor:pointer; margin-top:3vw; background:#ff1493; color:#fff; box-shadow:0 0 10px #ff69b4; transition:0.3s ease;}
+button:hover { transform: scale(1.1);}
+</style>
+</head>
+<body>
+
+<!-- Stage 1: Black BG + Happy Birthday -->
+<div id="stage1" class="stage active">
+<h1>🎉 Happy Birthday Darling! 🎉</h1>
+<button onclick="nextStage(2)">Next</button>
+</div>
+
+<!-- Stage 2: Candle blow -->
+<div id="stage2" class="stage">
+<div class="pink-box">
+<h1>Light Your Candle 🎂</h1>
+<div class="candle" id="candle"><div class="flame" id="flame"></div></div>
+<h1 id="shortWish">✨ Happy Birthday Darling! ✨</h1>
+</div>
+<button id="nextBtn2" style="display:none;" onclick="nextStage(3)">Next</button>
+</div>
+
+<!-- Stage 3: Full letter -->
+<div id="stage3" class="stage">
+<p id="letter"></p>
+</div>
+
+<audio autoplay loop>
+<source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+// Full letter with name Zara
+const fullLetter = `Dear Darling,
+
+Happy Birthday Darling! 🎉💖
+
+On this special day, I wish you all the joy, love, and laughter in the world. May your dreams come true, your heart be filled with happiness, and your life be surrounded by the people and moments you love most. You are amazing, inspiring, and truly special, and I hope this birthday brings unforgettable memories, endless blessings, and all the success you deserve. Celebrate yourself today, and remember you are loved beyond measure. 💖🎂🎈
+
+With all my love,
+Zara`;
+
+function nextStage(num){
+    document.querySelectorAll('.stage').forEach(s=>s.classList.remove('active'));
+    const stage = document.getElementById('stage'+num);
+    stage.classList.add('active');
+    if(num===3){
+        // Ensure letter element visible before starting typewriter
+        const letterEl = document.getElementById('letter');
+        letterEl.style.opacity='1';
+        typeLetter(letterEl, fullLetter);
+    }
+}
+
+// Confetti & balloons
+function createConfetti(){
+    for(let i=0;i<80;i++){
+        let c=document.createElement('div');
+        c.classList.add('confetti');
+        c.style.left=Math.random()*window.innerWidth+'px';
+        c.style.background=`hsl(${Math.random()*360},100%,50%)`;
+        c.style.width=c.style.height=(2+Math.random()*3)+'vw';
+        c.style.animationDuration=(2+Math.random()*3)+'s';
+        document.body.appendChild(c);
+    }
+}
+
+function createBalloons(){
+    const colors=['#ff4b5c','#ffb400','#28df99','#6a2c70','#1982c4','#f72585'];
+    for(let i=0;i<15;i++){
+        let b=document.createElement('div');
+        b.classList.add('balloon');
+        b.style.background=colors[Math.floor(Math.random()*colors.length)];
+        b.style.left=Math.random()*85+'vw';
+        b.style.animationDuration=(5+Math.random()*5)+'s';
+        let s=document.createElement('div');
+        s.classList.add('string');
+        b.appendChild(s);
+        document.body.appendChild(b);
+    }
+}
+
+// Typewriter effect
+function typeLetter(element, text,index=0){
+    if(index<text.length){
+        element.innerHTML += text.charAt(index);
+        setTimeout(()=>typeLetter(element,text,index+1),40);
+    }
+}
+
+// Candle blow
+function blowCandle(){
+    document.getElementById('flame').style.display='none';
+    document.getElementById('shortWish').classList.add('visible');
+    createConfetti();
+    createBalloons();
+    setTimeout(()=>{ document.getElementById('nextBtn2').style.display='block'; },1000);
+}
+
+document.getElementById('candle').addEventListener('touchstart', blowCandle);
+document.getElementById('candle').addEventListener('click', blowCandle);
+
+</script>
+</body>
+</html>
